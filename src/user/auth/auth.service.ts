@@ -17,42 +17,36 @@ export class AuthService {
   @Inject(AuthHelper)
   private readonly helper: AuthHelper;
 
-  async register(body: RegisterDto) {
+  async adminRegister(body: RegisterDto) {
     try {
       const { firstName, lastName, role, email, password }: RegisterDto = body;
-      let user: Users = await this.usersRepository.findOne({
-        where: { email },
-      });
-
-      // const result: ResponseService = new ResponseService();
-      if (user) {
-        throw new HttpException('Email already exists', HttpStatus.CONFLICT);
+      if (role === 'ADMIN') {
+        let user: Users = await this.usersRepository.findOne({
+          where: { email },
+        });
+        if (user) {
+          throw new HttpException('Email already exists', HttpStatus.CONFLICT);
+        }
+        const userProfile = new UserProfile();
+        userProfile.firstName = firstName;
+        userProfile.lastName = lastName;
+        userProfile.email = email;
+        const userProfileData = await this.userProfileRepository.save(
+          userProfile,
+        );
+        user = new Users();
+        const roleIdCount = await this.usersRepository.findAndCount({
+          where: { role: role },
+        });
+        const sequenceNumber = roleIdCount[1] + 1;
+        user.userId = `${role}${sequenceNumber}`;
+        user.email = email;
+        user.password = this.helper.encodePassword(password);
+        user.role = role;
+        const saveUser = await this.usersRepository.save(user);
+        return saveUser;
       }
-      const userProfile = new UserProfile();
-      userProfile.firstName = firstName;
-      userProfile.lastName = lastName;
-      userProfile.email = email;
-      const userProfileData = await this.userProfileRepository.save(
-        userProfile,
-      );
-      console.log('userProfileData:::', userProfileData);
-      user = new Users();
-      const roleIdCount = await this.usersRepository.findAndCount({
-        where: { role: role },
-      });
-      const sequenceNumber = roleIdCount[1] + 1;
-      user.userId = `${role}${sequenceNumber}`;
-      user.email = email;
-      user.password = this.helper.encodePassword(password);
-      user.role = role;
-      //   user.usersToRoles = userRoles;
-      //   user.createdDate = new Date();
-      //   user.userProfile = userProfileData;
-      const saveUser = await this.usersRepository.save(user);
-      console.log('saveUser:::', saveUser);
-      return saveUser;
     } catch (error) {
-      console.log('error:::', error);
       throw error;
     }
   }

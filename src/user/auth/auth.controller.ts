@@ -26,11 +26,11 @@ export class AuthController {
   @Post('register')
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiOperation({
-    summary: 'Create one User',
-    description: 'Create one User',
+    summary: 'Create one admin',
+    description: 'Create one admin',
   })
-  private register(@Body() body: RegisterDto) {
-    return this.service.register(body);
+  private adminRegister(@Body() body: RegisterDto) {
+    return this.service.adminRegister(body);
   }
 
   @Post('login')

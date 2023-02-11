@@ -10,6 +10,8 @@ import { Users } from '../entities/user.entity';
 export class JwtAuthGuard extends AuthGuard('jwt') {
   public handleRequest(err: unknown, user: Users): any {
     if (user) {
+      console.log('user:::11111', user);
+
       return user;
     } else {
       throw new UnauthorizedException(err);
@@ -20,6 +22,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     await super.canActivate(context);
 
     const user: Request = context.switchToHttp().getRequest();
+    console.log('user:::222', user);
     // const request = context.switchToHttp().getRequest();
     // return request.user;
     return user ? true : false;

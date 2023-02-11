@@ -7,6 +7,7 @@ import { getEnvPath } from './common/helper/env.helper';
 import { TypeOrmConfigService } from './common/typeorm/typeorm.service';
 import { RolesModule } from './roles/entities/roles.module';
 import { AuthModule } from './user/auth/auth.module';
+import { UserModule } from './user/user.module';
 
 const envFilePath: string = getEnvPath(process.cwd());
 
@@ -16,6 +17,7 @@ const envFilePath: string = getEnvPath(process.cwd());
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
     RolesModule,
     AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
